@@ -46,12 +46,19 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.rocketmq.remoting.netty.TlsSystemConfig.TLS_ENABLE;
 
+/**
+ * broker启动类
+ */
 public class BrokerStartup {
     public static Properties properties = null;
     public static CommandLine commandLine = null;
     public static String configFile = null;
     public static Logger log;
 
+    /**
+     * 主入口
+     * @param args
+     */
     public static void main(String[] args) {
         start(createBrokerController(args));
     }
@@ -78,13 +85,22 @@ public class BrokerStartup {
         return null;
     }
 
+    /**
+     * 接收命令参数
+     * @param args
+     * @return
+     */
     public static BrokerController createBrokerController(String[] args) {
+        //设置当前rmq的版本
         System.setProperty(RemotingCommand.REMOTING_VERSION_KEY, Integer.toString(MQVersion.CURRENT_VERSION));
 
+        //发送消息缓冲区大小（系统属性优先）
         if (null == System.getProperty(NettySystemConfig.COM_ROCKETMQ_REMOTING_SOCKET_SNDBUF_SIZE)) {
+            //未设置的话，128k
             NettySystemConfig.socketSndbufSize = 131072;
         }
 
+        //接收消息缓冲区大小（系统属性优先）
         if (null == System.getProperty(NettySystemConfig.COM_ROCKETMQ_REMOTING_SOCKET_RCVBUF_SIZE)) {
             NettySystemConfig.socketRcvbufSize = 131072;
         }
@@ -98,6 +114,8 @@ public class BrokerStartup {
                 System.exit(-1);
             }
 
+
+            //netty：client、server的配置；broker本身的配置
             final BrokerConfig brokerConfig = new BrokerConfig();
             final NettyServerConfig nettyServerConfig = new NettyServerConfig();
             final NettyClientConfig nettyClientConfig = new NettyClientConfig();
@@ -107,11 +125,14 @@ public class BrokerStartup {
             nettyServerConfig.setListenPort(10911);
             final MessageStoreConfig messageStoreConfig = new MessageStoreConfig();
 
+            //如果是从节点，这里改变可接受的比例值，比主节点小10。
+            // Q：从逻辑上来看slave这步判断根本不会生效，因为messageStoreConfig异步初始化的时候，就是BrokerRole.ASYNC_MASTER,这里判断什么用？
             if (BrokerRole.SLAVE == messageStoreConfig.getBrokerRole()) {
                 int ratio = messageStoreConfig.getAccessMessageInMemoryMaxRatio() - 10;
                 messageStoreConfig.setAccessMessageInMemoryMaxRatio(ratio);
             }
 
+            //命令行如果指定了配置文件（broker、nettyclient、nettyserver相关配置），则在原有默认的基础上，把这些属性注入到配置对象
             if (commandLine.hasOption('c')) {
                 String file = commandLine.getOptionValue('c');
                 if (file != null) {
@@ -131,8 +152,10 @@ public class BrokerStartup {
                 }
             }
 
+            //最后把命令行中的对象参数做最后一层次覆盖。也就是命令行里的参数，优先级最高。
             MixAll.properties2Object(ServerUtil.commandLine2Properties(commandLine), brokerConfig);
 
+            //如果没有设置参数：ROCKETMQ_HOME(安装目录)，直接退出程序
             if (null == brokerConfig.getRocketmqHome()) {
                 System.out.printf("Please set the " + MixAll.ROCKETMQ_HOME_ENV
                     + " variable in your environment to match the location of the RocketMQ installation");
@@ -144,6 +167,7 @@ public class BrokerStartup {
                 try {
                     String[] addrArray = namesrvAddr.split(";");
                     for (String addr : addrArray) {
+                        //这里只是尝试判断配置的namesrv地址是否正确
                         RemotingUtil.string2SocketAddress(addr);
                     }
                 } catch (Exception e) {
@@ -251,6 +275,11 @@ public class BrokerStartup {
         System.setProperty("rocketmq.namesrv.domain.subgroup", rmqAddressServerSubGroup);
     }
 
+    /**
+     * 除开默认的帮助和namesrv地址，添加broker个性化的参数:configFile、printConfigItem、printImportantConfig
+     * @param options
+     * @return
+     */
     private static Options buildCommandlineOptions(final Options options) {
         Option opt = new Option("c", "configFile", true, "Broker config properties file");
         opt.setRequired(false);

@@ -26,6 +26,11 @@ import org.apache.commons.cli.ParseException;
 
 public class ServerUtil {
 
+    /**
+     * 添加命令参数，这里用以所有的子模块，共用的属性：目前h-->帮助命令，n-->namesrv服务地址
+     * @param options 接收参数的集合
+     * @return 维护需要添加进去的选项后的options
+     */
     public static Options buildCommandlineOptions(final Options options) {
         Option opt = new Option("h", "help", false, "Print help");
         opt.setRequired(false);
@@ -40,6 +45,14 @@ public class ServerUtil {
         return options;
     }
 
+    /**
+     * 把用户命令中的参数结合程序定义的属性，进行转换成程序可接受的命令协议，commandLine
+     * @param appName
+     * @param args
+     * @param options
+     * @param parser
+     * @return
+     */
     public static CommandLine parseCmdLine(final String appName, String[] args, Options options,
         CommandLineParser parser) {
         HelpFormatter hf = new HelpFormatter();
