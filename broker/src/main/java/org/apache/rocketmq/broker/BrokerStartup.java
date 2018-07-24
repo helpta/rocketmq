@@ -126,7 +126,7 @@ public class BrokerStartup {
             final MessageStoreConfig messageStoreConfig = new MessageStoreConfig();
 
             //如果是从节点，这里改变可接受的比例值，比主节点小10。
-            // Q：从逻辑上来看slave这步判断根本不会生效，因为messageStoreConfig异步初始化的时候，就是BrokerRole.ASYNC_MASTER,这里判断什么用？
+            // Q：从逻辑上来看slave这步判断根本不会生效，因为messageStoreConfig初始化的时候，就是BrokerRole.ASYNC_MASTER,这里判断什么用？
             if (BrokerRole.SLAVE == messageStoreConfig.getBrokerRole()) {
                 int ratio = messageStoreConfig.getAccessMessageInMemoryMaxRatio() - 10;
                 messageStoreConfig.setAccessMessageInMemoryMaxRatio(ratio);
@@ -181,6 +181,7 @@ public class BrokerStartup {
             switch (messageStoreConfig.getBrokerRole()) {
                 case ASYNC_MASTER:
                 case SYNC_MASTER:
+                    //设置主节点标识
                     brokerConfig.setBrokerId(MixAll.MASTER_ID);
                     break;
                 case SLAVE:
@@ -202,6 +203,7 @@ public class BrokerStartup {
             configurator.doConfigure(brokerConfig.getRocketmqHome() + "/conf/logback_broker.xml");
 
             if (commandLine.hasOption('p')) {
+                //日志输出配置项：broker配置、nettyserver、nettyclient、messagesotre
                 Logger console = LoggerFactory.getLogger(LoggerName.BROKER_CONSOLE_NAME);
                 MixAll.printObjectProperties(console, brokerConfig);
                 MixAll.printObjectProperties(console, nettyServerConfig);
@@ -209,6 +211,7 @@ public class BrokerStartup {
                 MixAll.printObjectProperties(console, messageStoreConfig);
                 System.exit(0);
             } else if (commandLine.hasOption('m')) {
+                //日志输出配置项：只输出带有重要注解的属性‘ImportantField’
                 Logger console = LoggerFactory.getLogger(LoggerName.BROKER_CONSOLE_NAME);
                 MixAll.printObjectProperties(console, brokerConfig, true);
                 MixAll.printObjectProperties(console, nettyServerConfig, true);

@@ -21,11 +21,18 @@ import org.apache.rocketmq.common.constant.LoggerName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 抽象的配置管理（主要涉及读写配置文件）
+ */
 public abstract class ConfigManager {
     private static final Logger log = LoggerFactory.getLogger(LoggerName.COMMON_LOGGER_NAME);
 
     public abstract String encode();
 
+    /**
+     *加载执行配置文件内容，并通过{@link #decode(String)}方法，注入到子类
+     * @return
+     */
     public boolean load() {
         String fileName = null;
         try {
@@ -45,8 +52,16 @@ public abstract class ConfigManager {
         }
     }
 
+    /**
+     * 具体的配置文件路径，由子类具体实现
+     * @return
+     */
     public abstract String configFilePath();
 
+    /**
+     * 尝试加载之前的备份文件（在文件持久化的时候，会先备份历史数据，可查看{@link #persist()}）
+     * @return
+     */
     private boolean loadBak() {
         String fileName = null;
         try {
@@ -65,8 +80,15 @@ public abstract class ConfigManager {
         return true;
     }
 
+    /**
+     * 解析指定文件中的内容，自实现
+     * @param jsonString 指定文件中的内容
+     */
     public abstract void decode(final String jsonString);
 
+    /**
+     *同步，持久化配置项
+     */
     public synchronized void persist() {
         String jsonString = this.encode(true);
         if (jsonString != null) {
@@ -79,5 +101,10 @@ public abstract class ConfigManager {
         }
     }
 
+    /**
+     * 使用者把需要持久化的配置型，做自定义的处理，自实现
+     * @param prettyFormat 是否格式化
+     * @return
+     */
     public abstract String encode(final boolean prettyFormat);
 }

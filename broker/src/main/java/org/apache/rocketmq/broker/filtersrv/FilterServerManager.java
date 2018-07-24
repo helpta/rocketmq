@@ -35,6 +35,9 @@ import org.apache.rocketmq.remoting.common.RemotingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * todo:
+ */
 public class FilterServerManager {
 
     public static final long FILTER_SERVER_MAX_IDLE_TIME_MILLS = 30000;

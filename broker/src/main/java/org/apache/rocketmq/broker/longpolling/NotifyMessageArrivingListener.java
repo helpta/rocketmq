@@ -21,6 +21,9 @@ import org.apache.rocketmq.store.MessageArrivingListener;
 
 import java.util.Map;
 
+/**
+ * TODO：字面，监听消息到达，并通知client拉消息的请求
+ */
 public class NotifyMessageArrivingListener implements MessageArrivingListener {
     private final PullRequestHoldService pullRequestHoldService;
 

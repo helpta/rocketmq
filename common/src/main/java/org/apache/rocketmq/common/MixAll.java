@@ -140,9 +140,11 @@ public class MixAll {
 
     public static void string2File(final String str, final String fileName) throws IOException {
 
+        //待写入的内容，先写入tmp文件
         String tmpFile = fileName + ".tmp";
         string2FileNotSafe(str, tmpFile);
 
+        //写入之前，把之前的文件做备份bak文件
         String bakFile = fileName + ".bak";
         String prevContent = file2String(fileName);
         if (prevContent != null) {

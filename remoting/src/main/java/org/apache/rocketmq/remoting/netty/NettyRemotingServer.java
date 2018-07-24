@@ -69,6 +69,7 @@ public class NettyRemotingServer extends NettyRemotingAbstract implements Remoti
     private final EventLoopGroup eventLoopGroupBoss;
     private final NettyServerConfig nettyServerConfig;
 
+    //公用线程池
     private final ExecutorService publicExecutor;
     private final ChannelEventListener channelEventListener;
 
@@ -155,6 +156,7 @@ public class NettyRemotingServer extends NettyRemotingAbstract implements Remoti
     }
 
     private boolean useEpoll() {
+        //操作系统名称（System.getProperty("os.name")）包含linux字样 && 配置项中是否指定使用epoll && epoll是否可用
         return RemotingUtil.isLinuxPlatform()
             && nettyServerConfig.isUseEpollNativeSelector()
             && Epoll.isAvailable();

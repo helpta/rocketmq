@@ -40,6 +40,9 @@ import org.apache.rocketmq.common.sysflag.TopicSysFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * todo:消息主题配置管理
+ */
 public class TopicConfigManager extends ConfigManager {
     private static final Logger log = LoggerFactory.getLogger(LoggerName.BROKER_LOGGER_NAME);
     private static final long LOCK_TIMEOUT_MILLIS = 3000;
