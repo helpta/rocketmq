@@ -72,6 +72,11 @@ public class SendMessageRequestHeaderV2 implements CommandCustomHeader {
         return v1;
     }
 
+    /**
+     * 把属性名称缩短
+     * @param v1
+     * @return
+     */
     public static SendMessageRequestHeaderV2 createSendMessageRequestHeaderV2(final SendMessageRequestHeader v1) {
         SendMessageRequestHeaderV2 v2 = new SendMessageRequestHeaderV2();
         v2.a = v1.getProducerGroup();

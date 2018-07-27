@@ -292,8 +292,18 @@ public class UtilAll {
         return result;
     }
 
+    /**
+     * 压缩内容，这里使用Deflater
+     * 可参考：http://www.importnew.com/14410.html
+     * @param src
+     * @param level
+     * @return
+     * @throws IOException
+     */
     public static byte[] compress(final byte[] src, final int level) throws IOException {
-        byte[] result = src;
+        //这里原始是有一个赋值，猜想是如果压缩失败，就返回原有的数据，但是代码中是对压缩失败做了try-catch，并且跑出了异常，这导致不会正常返回，所以这里的赋值是多余的。
+        // byte[] result = src;
+        byte[] result;
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(src.length);
         java.util.zip.Deflater defeater = new java.util.zip.Deflater(level);
         DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(byteArrayOutputStream, defeater);
