@@ -18,6 +18,9 @@ package org.apache.rocketmq.remoting;
 
 import org.apache.rocketmq.remoting.netty.ResponseFuture;
 
+/**
+ * 调用回调（rpc发生后，异步回调，一般用于异步调用）
+ */
 public interface InvokeCallback {
     void operationComplete(final ResponseFuture responseFuture);
 }

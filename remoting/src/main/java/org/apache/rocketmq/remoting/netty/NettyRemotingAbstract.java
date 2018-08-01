@@ -50,6 +50,9 @@ import org.apache.rocketmq.remoting.protocol.RemotingSysResponseCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * netty远程调用抽象，client、server端共用
+ */
 public abstract class NettyRemotingAbstract {
 
     /**
